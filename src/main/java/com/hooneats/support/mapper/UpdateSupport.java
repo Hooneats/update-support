@@ -14,16 +14,18 @@ import java.util.stream.Collectors;
 public interface UpdateSupport {
 
     default Optional<?> updateObject(
-        Class<?> resourceClass, Optional<?> resourceObject, Optional<?> targetObject
+        final Class<?> resourceClass, final Optional<?> resourceObject,
+        final Optional<?> targetObject
     ) {
-        Map<String, Optional<?>> updateFieldValueMap = getUpdateMapper(resourceClass,
+        final var updateFieldValueMap = getUpdateMapper(resourceClass,
             resourceObject);
         readMapAndUpdateObject(targetObject, updateFieldValueMap);
         return targetObject;
     }
 
-    private Map<String, Optional<?>> getUpdateMapper(Class<?> resourceClass, Optional<?> obj) {
-        Field[] fields = resourceClass.getDeclaredFields();
+    private Map<String, Optional<?>> getUpdateMapper(final Class<?> resourceClass,
+        final Optional<?> obj) {
+        final var fields = resourceClass.getDeclaredFields();
         return Arrays.stream(fields)
             .collect(
                 Collectors.toMap(getEntityFieldName(), getResourceFieldValue(obj)));
@@ -31,12 +33,12 @@ public interface UpdateSupport {
 
     private Function<Field, String> getEntityFieldName() {
         return field -> {
-            UpdateColumn updateColumn = field.getAnnotation(UpdateColumn.class);
+            final var updateColumn = field.getAnnotation(UpdateColumn.class);
             return updateColumn.updateFieldName();
         };
     }
 
-    private Function<Field, Optional<?>> getResourceFieldValue(Optional<?> obj) {
+    private Function<Field, Optional<?>> getResourceFieldValue(final Optional<?> obj) {
         return field -> {
             try {
                 field.setAccessible(true);
@@ -47,20 +49,20 @@ public interface UpdateSupport {
         };
     }
 
-    private void readMapAndUpdateObject(Optional<?> targetObject,
-        Map<String, Optional<?>> updateFieldAndValueMap) {
+    private void readMapAndUpdateObject(final Optional<?> targetObject,
+        final Map<String, Optional<?>> updateFieldAndValueMap) {
         updateFieldAndValueMap.forEach(updateObjectField(targetObject));
     }
 
     private static BiConsumer<String, Optional<?>> updateObjectField(
-        Optional<?> targetObject) {
-        var obj =
+        final Optional<?> targetObject) {
+        final var obj =
             targetObject.orElseThrow(
                 () -> new RuntimeException("Could not update, because targetObject is null"));
         return (key, value) -> {
             value.ifPresent(v -> {
                 try {
-                    Field field = obj.getClass().getDeclaredField(key);
+                    final var field = obj.getClass().getDeclaredField(key);
                     field.setAccessible(true);
                     field.set(obj, v);
                 } catch (Exception e) {
