@@ -1,4 +1,4 @@
-package com.support.mapper;
+package com.hooneats.support.mapper;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

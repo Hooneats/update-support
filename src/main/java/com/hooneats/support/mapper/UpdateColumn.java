@@ -1,4 +1,4 @@
-package com.support.mapper;
+package com.hooneats.support.mapper;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
