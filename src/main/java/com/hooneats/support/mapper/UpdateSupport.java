@@ -64,11 +64,11 @@ public interface UpdateSupport {
             targetObject.orElseThrow(
                 () -> new RuntimeException("Could not update, because targetObject is null"));
         return (key, value) -> {
+            if (key.isBlank()) {
+                return;
+            }
             value.ifPresent(v -> {
                 try {
-                    if (key.isBlank()) {
-                        return;
-                    }
                     final var field = obj.getClass().getDeclaredField(key);
                     field.setAccessible(true);
                     field.set(obj, v);
