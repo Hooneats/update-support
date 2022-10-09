@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UpdateColumn {
 
-  String updateFieldName() default "";
+  String name() default "";
 
 }
