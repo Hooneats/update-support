@@ -34,7 +34,7 @@ public interface UpdateSupport {
     private Function<Field, String> getEntityFieldName() {
         return field -> {
             final var updateColumn = field.getAnnotation(UpdateColumn.class);
-            return updateColumn.updateFieldName();
+            return updateColumn.name();
         };
     }
 
