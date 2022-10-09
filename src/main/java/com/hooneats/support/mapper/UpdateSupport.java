@@ -15,21 +15,22 @@ import java.util.stream.Collectors;
 public interface UpdateSupport {
 
     default Optional<?> updateObject(
-        final Class<?> resourceClass, final Optional<?> resourceObject,
+        final Optional<?> resourceObject,
         final Optional<?> targetObject
     ) {
-        final var updateFieldValueMap = getUpdateMapper(resourceClass,
-            resourceObject);
+        final var updateFieldValueMap = getUpdateMapper(resourceObject);
         readMapAndUpdateObject(targetObject, updateFieldValueMap);
         return targetObject;
     }
 
-    private Map<String, Optional<?>> getUpdateMapper(final Class<?> resourceClass,
-        final Optional<?> obj) {
-        final var fields = resourceClass.getDeclaredFields();
+    private Map<String, Optional<?>> getUpdateMapper(
+        final Optional<?> resourceObject) {
+        final var fields = resourceObject.orElseThrow(
+                () -> new RuntimeException("Could not update, because resourceObject is null"))
+            .getClass().getDeclaredFields();
         return Arrays.stream(fields)
             .collect(
-                Collectors.toMap(getEntityFieldName(), getResourceFieldValue(obj)));
+                Collectors.toMap(getEntityFieldName(), getResourceFieldValue(resourceObject)));
     }
 
     private Function<Field, String> getEntityFieldName() {
@@ -42,11 +43,11 @@ public interface UpdateSupport {
         };
     }
 
-    private Function<Field, Optional<?>> getResourceFieldValue(final Optional<?> obj) {
+    private Function<Field, Optional<?>> getResourceFieldValue(final Optional<?> resourceObject) {
         return field -> {
             try {
                 field.setAccessible(true);
-                return Optional.ofNullable(field.get(obj.get()));
+                return Optional.ofNullable(field.get(resourceObject.get()));
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -73,7 +74,8 @@ public interface UpdateSupport {
                     field.setAccessible(true);
                     field.set(obj, v);
                 } catch (Exception e) {
-                    throw new RuntimeException("Could not update, maybe problem is updateColumn name");
+                    throw new RuntimeException(
+                        "Could not update, maybe problem is updateColumn name");
                 }
             });
         };
