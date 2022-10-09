@@ -3,6 +3,7 @@ package com.hooneats.support.mapper;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -34,6 +35,9 @@ public interface UpdateSupport {
     private Function<Field, String> getEntityFieldName() {
         return field -> {
             final var updateColumn = field.getAnnotation(UpdateColumn.class);
+            if (Objects.isNull(updateColumn)) {
+                return "";
+            }
             return updateColumn.name();
         };
     }
@@ -62,6 +66,9 @@ public interface UpdateSupport {
         return (key, value) -> {
             value.ifPresent(v -> {
                 try {
+                    if (key.isBlank()) {
+                        return;
+                    }
                     final var field = obj.getClass().getDeclaredField(key);
                     field.setAccessible(true);
                     field.set(obj, v);
