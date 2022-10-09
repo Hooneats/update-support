@@ -54,7 +54,7 @@ public interface UpdateSupport {
         updateFieldAndValueMap.forEach(updateObjectField(targetObject));
     }
 
-    private static BiConsumer<String, Optional<?>> updateObjectField(
+    private BiConsumer<String, Optional<?>> updateObjectField(
         final Optional<?> targetObject) {
         final var obj =
             targetObject.orElseThrow(
