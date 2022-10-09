@@ -73,7 +73,7 @@ public interface UpdateSupport {
                     field.setAccessible(true);
                     field.set(obj, v);
                 } catch (Exception e) {
-                    throw new RuntimeException("Could not update, because trouble reflection");
+                    throw new RuntimeException("Could not update, maybe problem is field name");
                 }
             });
         };
