@@ -73,7 +73,7 @@ public interface UpdateSupport {
                     field.setAccessible(true);
                     field.set(obj, v);
                 } catch (Exception e) {
-                    throw new RuntimeException("Could not update, maybe problem is @UpdateColumn name");
+                    throw new RuntimeException("Could not update, maybe problem is updateColumn name");
                 }
             });
         };
